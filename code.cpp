@@ -1,10 +1,11 @@
 // C++ code to implement an ATM and
 // its basic functions
-#include <fstream>
-#include <iostream>
-#include <limits>
-#include <string.h>
-#include <unistd.h>
+#include <bits/stdc++.h>
+// #include <fstream>
+// #include <iostream>
+// #include <limits>
+// #include <string.h>
+// #include <unistd.h>
 using namespace std;
 
 // Class ATM to get user details
@@ -35,7 +36,6 @@ public:
             numeric_limits<streamsize>::max(),
             '\n');
         cout << "\nEnter username:";
-
         cin.getline(username, 30);
         cout << "\nEnter 4-digit "
              << "password:";
@@ -84,7 +84,7 @@ void atmUser()
 mainmenu:
 
     // System("cls");
-    cout << "\nWelcome to DigitalClock ATM";
+    cout << "\nWelcome to XYZ ATM";
     cout << "\nLogin as :\n1. Admin\n2."
          << " User\n3. "
             "Exit\nChoose one : ";
@@ -132,9 +132,11 @@ mainmenu:
                 a.viewallusers();
                 // sleep(4);
                 goto admin;
+            case 4:break;
 
-            case 4:
-                break;
+            default:
+                cout<<"Wrong choice :(  Try again";
+                goto admin;
             }
         }
         else
@@ -197,9 +199,9 @@ mainmenu:
         else
         {
             cout << "\nNo account found"
-                 << " with username "
-                    ":(\n\nHit ENTER to continue "
-                 << uname;
+                 << " with given username "<<uname<<" or may be wrong password"
+                <<":(\n\nHit ENTER to continue ";
+                //  << uname;
             cin.get();
         }
         goto mainmenu;
@@ -274,10 +276,61 @@ int atm::viewallusers()
 }
 
 // Function to delete the user
+// int atm::deleteuser(char *uname)
+// {
+
+//     atm a;
+
+//     fstream original, temp;
+//     original.open("aaa.txt", ios::in);
+//     if (!original)
+//     {
+//         cout << "\nfile not found";
+//         return 0;
+//     }
+//     else
+//     {
+//         temp.open("temp.txt",
+//                   ios::out | ios::app);
+//         original.read((char *)&a, sizeof(a));
+
+//         // Till end of file is reached
+//         while (!original.eof())
+//         {
+
+//             if (!strcmp(a.usernames(),
+//                         uname))
+//             {
+//                 cout << "data found "
+//                      << "and deleted"
+//                     //  << uname
+//                      << "\n";
+//             }
+//             else
+//             {
+//                 cout << "data not found "
+//                      << "Try later\n"
+//                      << "\n";
+//                 temp.write((char *)&a,
+//                            sizeof(a));
+//             }
+
+//             original.read((char *)&a,
+//                           sizeof(a));
+//         }
+
+//         original.close();
+//         temp.close();
+//         remove("aaa.txt");
+//         rename("temp.txt", "aaa.txt");
+//         // a.viewallusers();
+//     }
+//     return 0;
+// }
 int atm::deleteuser(char *uname)
 {
-
     atm a;
+    bool found = false;
 
     fstream original, temp;
     original.open("aaa.txt", ios::in);
@@ -288,37 +341,42 @@ int atm::deleteuser(char *uname)
     }
     else
     {
-        temp.open("temp.txt",
-                  ios::out | ios::app);
+        temp.open("temp.txt", ios::out | ios::app);
         original.read((char *)&a, sizeof(a));
 
-        // Till end of file is reached
+        // Loop until the end of the file is reached
         while (!original.eof())
         {
-
-            if (!strcmp(a.usernames(),
-                        uname))
+            if (!strcmp(a.usernames(), uname))
             {
-                cout << "data found "
-                     << "and deleted\n"
-                     << a.username
-                     << "\n";
+                // If the username matches, we skip writing it to the temp file (effectively deleting it)
+                found = true;
+                cout << "Data found and deleted for user: " << uname << "\n";
             }
             else
             {
-                temp.write((char *)&a,
-                           sizeof(a));
+                // If no match, we write the record into the temporary file
+                temp.write((char *)&a, sizeof(a));
             }
 
-            original.read((char *)&a,
-                          sizeof(a));
+            original.read((char *)&a, sizeof(a));
         }
 
         original.close();
         temp.close();
+
+        // If no matching user was found, display a message
+        if (!found)
+        {
+            cout << "Data not found for user: " << uname << "\n";
+        }
+
+        // Delete the original file and rename the temp file
         remove("aaa.txt");
         rename("temp.txt", "aaa.txt");
-        a.viewallusers();
+
+        // Optionally display all users after deletion
+        // a.viewallusers();
     }
     return 0;
 }
@@ -489,6 +547,5 @@ int main()
 {
     // Function Call
     atmUser();
-
     return 0;
 }
